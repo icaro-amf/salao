@@ -1,6 +1,7 @@
 package br.com.spacovip.salao.dto.cliente;
 
 import br.com.spacovip.salao.enums.Sexo;
+import br.com.spacovip.salao.enums.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 
