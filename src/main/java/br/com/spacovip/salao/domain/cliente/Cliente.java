@@ -27,9 +27,11 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String nome;
+
+    @Column(unique = true)
     private String email;
 
-    @Column(length = 11)
+    @Column(length = 11, unique = true)
     private String telefone;
     private LocalDate dataNascimento;
 
