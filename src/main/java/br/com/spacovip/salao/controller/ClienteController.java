@@ -28,7 +28,7 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ClienteResponseDTO>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+    public ResponseEntity<Page<ClienteResponseDTO>> listar(@PageableDefault(size = 10, sort = {"nome","id"}) Pageable paginacao) {
         Page<ClienteResponseDTO> response = service.buscarTodosClientes(paginacao);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -41,19 +41,19 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable UUID id, @Valid @RequestBody ClienteRequestDTO request) {
-        ClienteResponseDTO response = service.atualizarCliente(id, request);
+        ClienteResponseDTO response = service.atualizar(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("/{id}/desativar")
     public ResponseEntity<Void> desativar(@PathVariable UUID id) {
-        service.desativarCliente(id);
+        service.desativar(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remover(@PathVariable UUID id) {
-        service.excluirCliente(id);
+        service.excluir(id);
         return ResponseEntity.noContent().build();
     }
 }

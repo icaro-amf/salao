@@ -4,6 +4,7 @@ import br.com.spacovip.salao.domain.cliente.Cliente;
 import br.com.spacovip.salao.dto.cliente.ClienteRequestDTO;
 import br.com.spacovip.salao.dto.cliente.ClienteResponseDTO;
 import br.com.spacovip.salao.enums.Status;
+import br.com.spacovip.salao.exception.BusinessException;
 import br.com.spacovip.salao.exception.ResourceNotFoundException;
 import br.com.spacovip.salao.mapper.ClienteMapper;
 import br.com.spacovip.salao.repository.ClienteRepository;
@@ -25,6 +26,14 @@ public class ClienteService {
     public ClienteResponseDTO cadastrar(ClienteRequestDTO request) {
         log.info("Iniciando cadastro de cliente: {}", request.nome());
 
+        if (repository.existsByEmail(request.email())) {
+            throw new BusinessException("E-mail indisponível para uso");
+        }
+
+        if (repository.existsByTelefone(request.telefone())) {
+            throw new BusinessException("Telefone indisponível para uso");
+        }
+
         Cliente cliente = mapper.toEntity(request);
         Cliente clienteSalvo = repository.save(cliente);
 
@@ -44,7 +53,7 @@ public class ClienteService {
         return paginaDeClientes.map(mapper::toResponse);
     }
 
-    public void desativarCliente(UUID id) {
+    public void desativar(UUID id) {
         log.info("Desativando cliente com ID: {}", id);
         Cliente cliente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
         cliente.setStatus(Status.INATIVO);
@@ -52,7 +61,7 @@ public class ClienteService {
         log.info("Cliente desativado com sucesso. ID: {}", cliente.getId());
     }
 
-    public void excluirCliente(UUID id) {
+    public void excluir(UUID id) {
         log.info("Excluindo cliente ID do banco de dados: {}", id);
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Cliente não encontrado para exclusão com o ID: " + id);
@@ -61,9 +70,17 @@ public class ClienteService {
         log.warn("Cliente excluído com sucesso.");
     }
 
-    public ClienteResponseDTO atualizarCliente(UUID id, ClienteRequestDTO request) {
+    public ClienteResponseDTO atualizar(UUID id, ClienteRequestDTO request) {
         log.info("Atualizando cliente com ID: {}", id);
         Cliente clienteExistente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
+
+        if (!clienteExistente.getEmail().equals(request.email()) && repository.existsByEmail(request.email())) {
+            throw new BusinessException("Este e-mail não está disponivel.");
+        }
+
+        if (!clienteExistente.getTelefone().equals(request.telefone()) && repository.existsByTelefone(request.telefone())) {
+            throw new BusinessException("Este telefone não está disponivel.");
+        }
 
         clienteExistente.setNome(request.nome());
         clienteExistente.setEmail(request.email());
