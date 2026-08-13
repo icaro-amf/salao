@@ -4,13 +4,15 @@ import br.com.spacovip.salao.domain.cliente.Cliente;
 import br.com.spacovip.salao.dto.cliente.ClienteRequestDTO;
 import br.com.spacovip.salao.dto.cliente.ClienteResponseDTO;
 import br.com.spacovip.salao.enums.Status;
+import br.com.spacovip.salao.exception.ResourceNotFoundException;
 import br.com.spacovip.salao.mapper.ClienteMapper;
 import br.com.spacovip.salao.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -32,19 +34,19 @@ public class ClienteService {
 
     public ClienteResponseDTO buscarPorId(UUID id) {
         log.info("Buscando cliente com ID: {}", id);
-        Cliente cliente = repository.findById(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado com o ID: " + id));
+        Cliente cliente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
         return mapper.toResponse(cliente);
     }
 
-    public List<ClienteResponseDTO> buscarTodosClientes() {
-        log.info("Buscando todos os clientes.");
-        List<Cliente> clientes = repository.findAll();
-        return clientes.stream().map(mapper::toResponse).toList();
+    public Page<ClienteResponseDTO> buscarTodosClientes(Pageable paginacao) {
+        log.info("Buscando clientes com paginação.");
+        Page<Cliente> paginaDeClientes = repository.findAll(paginacao);
+        return paginaDeClientes.map(mapper::toResponse);
     }
 
     public void desativarCliente(UUID id) {
         log.info("Desativando cliente com ID: {}", id);
-        Cliente cliente = repository.findById(id).orElseThrow(() -> new RuntimeException("Cliente nao encontrado para a desativacao com o ID: " + id));
+        Cliente cliente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
         cliente.setStatus(Status.INATIVO);
         repository.save(cliente);
         log.info("Cliente desativado com sucesso. ID: {}", cliente.getId());
@@ -53,7 +55,7 @@ public class ClienteService {
     public void excluirCliente(UUID id) {
         log.info("Excluindo cliente ID do banco de dados: {}", id);
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Cliente não encontrado para exclusão");
+            throw new ResourceNotFoundException("Cliente não encontrado para exclusão com o ID: " + id);
         }
         repository.deleteById(id);
         log.warn("Cliente excluído com sucesso.");
@@ -61,7 +63,7 @@ public class ClienteService {
 
     public ClienteResponseDTO atualizarCliente(UUID id, ClienteRequestDTO request) {
         log.info("Atualizando cliente com ID: {}", id);
-        Cliente clienteExistente = repository.findById(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado para atualização com ID: " + id));
+        Cliente clienteExistente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
 
         clienteExistente.setNome(request.nome());
         clienteExistente.setEmail(request.email());

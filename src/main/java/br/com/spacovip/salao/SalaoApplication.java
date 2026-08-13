@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SalaoApplication {
 
-    void main() {
-        SpringApplication.run(SalaoApplication.class);
+    static void main(String[] args) {
+        SpringApplication.run(SalaoApplication.class, args);
     }
 
 }
