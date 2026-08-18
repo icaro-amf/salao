@@ -1,5 +1,6 @@
 package br.com.spacovip.salao.dto.profissional;
 
+import br.com.spacovip.salao.enums.Sexo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 
@@ -20,6 +21,9 @@ public record ProfissionalRequestDTO(
 
         @Past(message = "A data de nascimento informada não condiz com a realidade")
         @JsonFormat(pattern = "dd/MM/yyyy")
-        LocalDate dataNascimento
+        LocalDate dataNascimento,
+
+        @NotNull(message = "O sexo é obrigatório")
+        Sexo sexo
 ) {
 }

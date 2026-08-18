@@ -46,12 +46,4 @@ public class Profissional {
 
     @ManyToMany(mappedBy = "profissionais")
     private List<Servico> servicos = new ArrayList<>();
-
-    public Profissional(ProfissionalRequestDTO profissional) {
-        this.nome = profissional.nome();
-        this.descricao = profissional.descricao();
-        this.email = profissional.email();
-        this.telefone = profissional.telefone();
-        this.dataNascimento = profissional.dataNascimento();
-    }
 }
