@@ -4,7 +4,7 @@ import br.com.spacovip.salao.domain.cliente.Cliente;
 import br.com.spacovip.salao.dto.cliente.ClienteRequestDTO;
 import br.com.spacovip.salao.dto.cliente.ClienteResponseDTO;
 import br.com.spacovip.salao.enums.Status;
-import br.com.spacovip.salao.exception.BusinessException;
+import br.com.spacovip.salao.exception.ConflitoUnicidadeException;
 import br.com.spacovip.salao.exception.ResourceNotFoundException;
 import br.com.spacovip.salao.mapper.ClienteMapper;
 import br.com.spacovip.salao.repository.ClienteRepository;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -23,15 +24,16 @@ public class ClienteService {
     private final ClienteRepository repository;
     private final ClienteMapper mapper;
 
+    @Transactional
     public ClienteResponseDTO cadastrar(ClienteRequestDTO request) {
         log.info("Iniciando cadastro de cliente: {}", request.nome());
 
         if (repository.existsByEmail(request.email())) {
-            throw new BusinessException("E-mail indisponível para uso");
+            throw new ConflitoUnicidadeException("E-mail indisponível para uso");
         }
 
         if (repository.existsByTelefone(request.telefone())) {
-            throw new BusinessException("Telefone indisponível para uso");
+            throw new ConflitoUnicidadeException("Telefone indisponível para uso");
         }
 
         Cliente cliente = mapper.toEntity(request);
@@ -53,6 +55,7 @@ public class ClienteService {
         return paginaDeClientes.map(mapper::toResponse);
     }
 
+    @Transactional
     public void desativar(UUID id) {
         log.info("Desativando cliente com ID: {}", id);
         Cliente cliente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
@@ -61,6 +64,7 @@ public class ClienteService {
         log.info("Cliente desativado com sucesso. ID: {}", cliente.getId());
     }
 
+    @Transactional
     public void excluir(UUID id) {
         log.info("Excluindo cliente ID do banco de dados: {}", id);
         if (!repository.existsById(id)) {
@@ -70,16 +74,17 @@ public class ClienteService {
         log.warn("Cliente excluído com sucesso.");
     }
 
+    @Transactional
     public ClienteResponseDTO atualizar(UUID id, ClienteRequestDTO request) {
         log.info("Atualizando cliente com ID: {}", id);
         Cliente clienteExistente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
 
         if (!clienteExistente.getEmail().equals(request.email()) && repository.existsByEmail(request.email())) {
-            throw new BusinessException("Este e-mail não está disponivel.");
+            throw new ConflitoUnicidadeException("Este e-mail não está disponivel.");
         }
 
         if (!clienteExistente.getTelefone().equals(request.telefone()) && repository.existsByTelefone(request.telefone())) {
-            throw new BusinessException("Este telefone não está disponivel.");
+            throw new ConflitoUnicidadeException("Este telefone não está disponivel.");
         }
 
         clienteExistente.setNome(request.nome());

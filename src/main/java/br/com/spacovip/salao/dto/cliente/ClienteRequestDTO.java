@@ -15,7 +15,7 @@ public record ClienteRequestDTO(
         String email,
 
         @NotBlank(message = "O preenchimento do telefone é obrigatório")
-        @Pattern(regexp = "^\\d{10,11}$", message = "O telefone deve conter apenas números (DDD + número) Ex: 11912346789")
+        @Pattern(regexp = "^\\d{11}$", message = "O telefone deve conter exatamente 11 dígitos (DDD + número) Ex: 11912346789")
         String telefone,
 
         @NotNull(message = "O preenchimento da data de nascimento é obrigatório para validação")

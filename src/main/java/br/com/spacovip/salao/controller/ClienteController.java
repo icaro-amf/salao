@@ -4,12 +4,14 @@ import br.com.spacovip.salao.dto.cliente.ClienteRequestDTO;
 import br.com.spacovip.salao.dto.cliente.ClienteResponseDTO;
 import br.com.spacovip.salao.service.ClienteService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/spacovip/clientes")
 @RequiredArgsConstructor
+@Validated
 public class ClienteController {
 
     private final ClienteService service;

@@ -29,9 +29,13 @@ public class ClienteMapper {
         return new ClienteResponseDTO(
                 entity.getId(),
                 entity.getNome(),
+                entity.getEmail(),
                 entity.getTelefone(),
+                entity.getDataNascimento(),
                 entity.getStatus(),
-                entity.getSexo()
+                entity.getSexo(),
+                entity.getDataCadastro(),
+                entity.getDataAtualizacao()
         );
     }
 }
