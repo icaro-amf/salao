@@ -52,11 +52,11 @@ O sistema gerencia o núcleo do salão de beleza focado nas seguintes entidades:
 
 1. Clone o repositório:
    ```bash
-   git clone [https://github.com/SEU_USUARIO/spaco-vip-api.git](https://github.com/SEU_USUARIO/spaco-vip-api.git)
+   git clone [https://github.com/SEU_USUARIO/spaco-vip-api.git](https://github.com/SEU_USUARIO/salao.git)
    ```
 2. Acesse a pasta do projeto:
     ```bash
-   cd spaco-vip-api
+   cd salao
     ```
 3. Execute o projeto com o Maven:
     ```bash
