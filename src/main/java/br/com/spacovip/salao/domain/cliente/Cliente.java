@@ -38,6 +38,8 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private LocalDateTime ultimoAgendamento;
+
     private LocalDateTime dataCadastro;
     private LocalDateTime dataAtualizacao;
 

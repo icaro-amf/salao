@@ -1,6 +1,7 @@
 package br.com.spacovip.salao.domain.servico;
 
 import br.com.spacovip.salao.domain.profissional.Profissional;
+import br.com.spacovip.salao.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +34,12 @@ public class Servico {
     private Long duracaoMinutos;
     private BigDecimal preco;
 
+    private LocalDateTime dataCadastro;
+    private LocalDateTime dataAtualizacao;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @ManyToMany
     @JoinTable(
             name = "profissional_servico",
@@ -39,4 +47,14 @@ public class Servico {
             inverseJoinColumns = @JoinColumn(name = "profissional_id")
     )
     private List<Profissional> profissionais = new ArrayList<>();
+
+    @PrePersist
+    public void prePersistir() {
+        this.dataCadastro = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.dataAtualizacao = LocalDateTime.now();
+    }
 }

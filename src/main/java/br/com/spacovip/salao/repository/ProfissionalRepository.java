@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface ProfissionalRepository extends JpaRepository<Profissional, UUID> {
+
+    boolean existsByEmail(String email);
+    boolean existsByTelefone(String telefone);
 }

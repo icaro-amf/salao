@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 public record ProfissionalRequestDTO(
         @NotBlank(message = "O preenchimento do nome é obrigatório")
@@ -19,11 +21,14 @@ public record ProfissionalRequestDTO(
         @Pattern(regexp = "^\\d{11}$", message = "O telefone deve conter exatamente 11 dígitos (DDD + número) Ex: 11912346789")
         String telefone,
 
+        @NotNull(message = "O preenchimento da data de nascimento é obrigatório para validação")
         @Past(message = "A data de nascimento informada não condiz com a realidade")
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate dataNascimento,
 
         @NotNull(message = "O sexo é obrigatório")
-        Sexo sexo
+        Sexo sexo,
+
+        List<UUID> servicosIds
 ) {
 }

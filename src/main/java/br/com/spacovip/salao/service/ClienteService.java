@@ -12,9 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -97,5 +100,34 @@ public class ClienteService {
         log.info("Cliente atualizado com sucesso.");
 
         return mapper.toResponse(clienteAtualizado);
+    }
+
+    @Transactional
+    public void processarInativacaoAutomatica() {
+        log.info("Iniciando rotina de inativação automática de clientes");
+        LocalDateTime cutoff = LocalDateTime.now().minusMonths(6);
+        List<Cliente> clientesParaInativar = repository.findClientesParaInativacao(Status.ATIVO, cutoff);
+        
+        for (Cliente cliente : clientesParaInativar) {
+            cliente.setStatus(Status.INATIVO);
+            repository.save(cliente);
+            log.debug("Cliente inativado automaticamente: {}", cliente.getId());
+        }
+        
+        log.info("Rotina de inativação concluída. {} clientes inativados", clientesParaInativar.size());
+    }
+
+    @Transactional
+    public void excluirClientesInativosAntigos() {
+        log.info("Iniciando rotina de exclusão de clientes inativos antigos");
+        LocalDateTime cutoff = LocalDateTime.now().minusMonths(6);
+        List<Cliente> clientesParaExcluir = repository.findClientesInativosParaExclusao(Status.INATIVO, cutoff);
+        
+        for (Cliente cliente : clientesParaExcluir) {
+            repository.delete(cliente);
+            log.debug("Cliente inativo antigo excluído: {}", cliente.getId());
+        }
+        
+        log.info("Rotina de exclusão concluída. {} clientes excluídos", clientesParaExcluir.size());
     }
 }
