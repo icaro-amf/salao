@@ -1,4 +1,4 @@
-﻿# 💇 Spaço Vip API
+﻿# 💇 Salão API
 
 **Uma API RESTful completa e escalável para gerenciamento de um salão de beleza.**
 
